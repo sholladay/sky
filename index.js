@@ -78,8 +78,8 @@ const main = async (input, options) => {
             beforeRequest : [],
             ...options.hooks
         },
-        prefix    : String(options.prefix || ''),
-        retry     : {
+        prefix : String(options.prefix || ''),
+        retry  : {
             maxRetryTime : 30_000,
             methods      : retryMethods,
             retries      : typeof options.retry === 'number' ? options.retry : 4,
@@ -223,6 +223,11 @@ export const { formData } = sky;
 export const { json } = sky;
 export const { text } = sky;
 
-export { NetworkError } from './lib/errors.js';
+export {
+    AbortError,
+    HTTPError,
+    NetworkError,
+    TimeoutError
+} from './lib/errors.js';
 
 export default sky;
