@@ -1,4 +1,4 @@
-# sky [![Build status for Sky](https://travis-ci.com/sholladay/sky.svg "Build Status")](https://travis-ci.com/sholladay/sky "Builds")
+# sky [![Build status for Sky](https://travis-ci.org/sholladay/sky.svg "Build Status")](https://travis-ci.com/sholladay/sky "Builds")
 
 > HTTP requests with fetch made easy
 
