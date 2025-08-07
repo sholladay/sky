@@ -2,15 +2,17 @@
 
 > HTTP requests with fetch made easy
 
-Sky is an HTTP client built on [`fetch()`](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API), designed to simplify common use cases, such as making requests that send or receive JSON, as well as error handling.
+Sky is an experimental HTTP client built on [`fetch()`](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API), designed to simplify common use cases, such as making requests that send or receive JSON, reusing options between requests, and handling errors.
 
-It is made by one of the [Ky](https://github.com/sindresorhus/ky) maintainers and leverages years of experience to improve upon its design. Features from Sky will be ported to Ky where possible.
+Sky is based on years of experience maintaining [Ky](https://github.com/sindresorhus/ky) and is a complete rewrite from scratch with the goal of improving upon its design. Improvements will be ported to Ky where feasible.
 
 ## Why?
 
- - Timeout option
- - Functional, modern internals
- - Discrete error types with helpful messages
+ - Timeout option to cancel requests that take too long
+ - Automatic retries for failed requests, with fine-grained control of when and why
+ - Automatic body parsing for both succesful and error responses
+ - Robust internals, with a functional design that avoids request cloning
+ - Dedicated error types with helpful messages, including `NetworkError`, `TimeoutError`, and more
  - Network errors indentify when [CORS](https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/CORS) may be the cause
 
 ## Install
@@ -50,7 +52,7 @@ Where to send the request. See also the `prefix` and `baseUrl` options, which af
 Type: `string` | [`URL`](https://developer.mozilla.org/en-US/docs/Web/API/URL)<br>
 Example: `'/api/'`
 
-A base URL for the `input`, which is useful for putting most requests under a given domain or path when using `sky.extend()`, while still allowing certain requests to go elsewhere. Only applied when `input` is a string.
+A base URL for the `input`, which is useful for putting most requests under a given domain or path when using `sky.extend()`, while still allowing requests with absolute URLs to bypass it and go elsewhere. Only applied when `input` is a string.
 
 The `input` (including any `prefix`) is _resolved_ against the base URL to determine the final request URL. See the [URL resolution guide](https://developer.mozilla.org/en-US/docs/Web/API/URL_API/Resolving_relative_references) and [parsing algorithm](https://url.spec.whatwg.org/#concept-basic-url-parser) for details.
 
@@ -63,7 +65,17 @@ A prefix for the `input`, which is useful for putting all requests under a given
 
 If needed, a forward slash `/` is inserted between `prefix` and `input` when they are joined. Any adjacent slashes are removed to avoid duplicates.
 
-If you want some requests to be able to bypass the prefix, you may want to use the `baseUrl` option instead.
+In most cases, you should use the `baseUrl` option instead, such as if you want some requests with absolute URLs to be able to bypass the prefix.
+
+##### retry
+
+Type: `number` | [`RetryOptions`](https://github.com/sindresorhus/p-retry/tree/0a288cc203d657eb20e317163ae21834b86ba1bb?tab=readme-ov-file#options)
+
+Options for how requests are retried in case of failure.
+
+By default, only requests with a safe method are retried. Also, if the failure is due to a response with a non-2xx HTTP status code, the request is only retried if it is a safe status code.
+
+**See the source code for additional options that are not yet documented.**
 
 ## Contributing
 
