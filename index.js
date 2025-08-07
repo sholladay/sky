@@ -7,7 +7,6 @@ import {
     retryStatusCodes
 } from './lib/constants.js';
 import { handleFetchError, handleFetchSuccess } from './lib/errors.js';
-import { abortSignalAny } from './lib/polyfill/abort-signal-any.js';
 
 const sendRequest = async (input, options) => {
     let hookResponse;
@@ -38,7 +37,7 @@ const sendRequest = async (input, options) => {
             request,
             options.timeout === false ?
                 {} :
-                { signal : abortSignalAny([request.signal, AbortSignal.timeout(options.timeout)]) }
+                { signal : AbortSignal.any([request.signal, AbortSignal.timeout(options.timeout)]) }
             // eslint-disable-next-line promise/prefer-await-to-then
         ).then(
             handleFetchSuccess(request, options),
