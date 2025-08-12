@@ -35,10 +35,10 @@ const sendRequest = async (input, options) => {
 
         return options.fetch(
             request,
-            options.timeout === false ?
-                {} :
-                { signal : AbortSignal.any([request.signal, AbortSignal.timeout(options.timeout)]) }
-            // eslint-disable-next-line promise/prefer-await-to-then
+            options.timeout === false
+                ? {}
+                : { signal : AbortSignal.any([request.signal, AbortSignal.timeout(options.timeout)]) }
+        // eslint-disable-next-line promise/prefer-await-to-then, promise/prefer-catch
         ).then(
             handleFetchSuccess(request, options),
             handleFetchError(request, options)
@@ -46,19 +46,19 @@ const sendRequest = async (input, options) => {
     }, {
         ...options.retry,
         shouldRetry(error) {
-            const isFatal = error.name === 'AbortError' ||
-                (
+            const isFatal = error.name === 'AbortError'
+                || (
                     // In Node.js: fetch('foo:')
-                    error.name === 'NetworkError' &&
-                    error.cause?.cause?.message === 'unknown scheme'
+                    error.name === 'NetworkError'
+                    && error.cause?.cause?.message === 'unknown scheme'
                 );
 
             if (isFatal) {
                 return false;
             }
             if (error.name === 'HTTPError') {
-                return options.retry.methods.includes(error.request.method) &&
-                    options.retry.statusCodes.includes(error.response.status);
+                return options.retry.methods.includes(error.request.method)
+                    && options.retry.statusCodes.includes(error.response.status);
             }
 
             return options.retry.shouldRetry?.(error) ?? true;

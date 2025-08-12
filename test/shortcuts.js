@@ -1,5 +1,5 @@
 import test from 'ava';
-import sky, { get, post, json } from '../index.js';
+import sky, { get, json, post } from '../index.js';
 import withServer from './helpers/server.js';
 
 test('get()', withServer, async (t, server) => {
