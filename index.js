@@ -6,7 +6,7 @@ import {
     retryMethods,
     retryStatusCodes
 } from './lib/constants.js';
-import { handleFetchError, handleFetchSuccess } from './lib/errors.js';
+import { handleResponse, throwFetchError } from './lib/errors.js';
 
 const sendRequest = async (input, options) => {
     let hookResponse;
@@ -30,28 +30,23 @@ const sendRequest = async (input, options) => {
         return hookResponse;
     }
 
-    return retry(() => {
+    return retry(async () => {
         const request = new Request(input, options);
+        const fetchOptions = options.timeout ? { signal : AbortSignal.any([request.signal, AbortSignal.timeout(options.timeout)]) } : {};
 
-        return options.fetch(
-            request,
-            options.timeout === false
-                ? {}
-                : { signal : AbortSignal.any([request.signal, AbortSignal.timeout(options.timeout)]) }
-        // eslint-disable-next-line promise/prefer-await-to-then, promise/prefer-catch
-        ).then(
-            handleFetchSuccess(request, options),
-            handleFetchError(request, options)
-        );
+        try {
+            const response = await handleResponse(request, options, await options.fetch(request, fetchOptions));
+            return response;
+        }
+        catch (error) {
+            throwFetchError(request, options, error);
+        }
     }, {
         ...options.retry,
         shouldRetry(error) {
-            const isFatal = error.name === 'AbortError'
-                || (
-                    // In Node.js: fetch('foo:')
-                    error.name === 'NetworkError'
-                    && error.cause?.cause?.message === 'unknown scheme'
-                );
+            // In Node.js: fetch('foo:')
+            const isUnknownScheme = error.name === 'NetworkError' && error.cause?.cause?.message === 'unknown scheme';
+            const isFatal = error.name === 'AbortError' || isUnknownScheme;
 
             if (isFatal) {
                 return false;
