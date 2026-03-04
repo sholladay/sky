@@ -14,7 +14,8 @@
         "build": "esbuild index.js global.js --bundle --charset=utf8 --format=esm --minify --outdir=build --sourcemap",
         "debug": "PWDEBUG=1 ava --timeout=3m",
         "dev": "esbuild index.js global.js --bundle --charset=utf8 --format=esm --outdir=build --sourcemap --watch",
-        "test": "npm run build && xo && ava"
+        "prepare": "npm run build",
+        "test": "xo && npm run build && ava"
     },
     "repository": {
         "type": "git",
@@ -29,7 +30,7 @@
     },
     "license": "MPL-2.0",
     "files": [
-        "index.js"
+        "build"
     ],
     "dependencies": {
         "is-network-error": "^1.1.0",
