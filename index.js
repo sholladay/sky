@@ -7,29 +7,9 @@ import {
     retryStatusCodes
 } from './lib/constants.js';
 import { handleResponse, throwFetchError } from './lib/errors.js';
+import * as hooks from './lib/hooks.js';
 
 const sendRequest = async (input, options) => {
-    let hookResponse;
-
-    for (const hook of options.hooks.beforeRequest) {
-        // eslint-disable-next-line no-await-in-loop
-        const result = await hook({
-            input,
-            options
-        });
-
-        if (result instanceof Response) {
-            hookResponse = result;
-        }
-        if (result) {
-            input = result;
-        }
-    }
-
-    if (hookResponse) {
-        return hookResponse;
-    }
-
     return retry(async () => {
         const request = new Request(input, options);
         const fetchOptions = options.timeout ? { signal : AbortSignal.any([request.signal, AbortSignal.timeout(options.timeout)]) } : {};
@@ -87,9 +67,8 @@ const main = async (input, options) => {
 
     if (typeof input === 'string') {
         if (options.prefix) {
-            if (!options.prefix.endsWith('/')) {
-                options.prefix += '/';
-            }
+            options.prefix += options.prefix.endsWith('/') ? '' : '/';
+
             if (input.startsWith('/')) {
                 input = input.slice(1);
             }
@@ -110,20 +89,14 @@ const main = async (input, options) => {
         options.headers.set('Accept', options.headers.get('Accept') ?? acceptTypes.get(options.responseType));
     }
 
-    let response = await sendRequest(input, options);
+    const hookResult = await hooks.beforeRequest(input, options);
 
-    for (const hook of options.hooks.afterResponse) {
-        // eslint-disable-next-line no-await-in-loop
-        const result = await hook({
-            input,
-            options,
-            response
-        });
-
-        if (result instanceof Response) {
-            response = result;
-        }
+    if (!(hookResult instanceof Response)) {
+        input = hookResult;
     }
+
+    const fetched = hookResult instanceof Response ? hookResult : await sendRequest(input, options);
+    const response = await hooks.afterResponse(input, options, fetched);
 
     if (options.responseType === 'json' && options.parseJson) {
         return options.parseJson(await response.text());
