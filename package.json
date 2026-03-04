@@ -41,9 +41,9 @@
         "@playwright/browser-chromium": "^1.51.1",
         "@playwright/browser-firefox": "^1.51.1",
         "@playwright/browser-webkit": "^1.51.1",
-        "ava": "^6.2.0",
-        "esbuild": "^0.25.2",
-        "eslint-config-tidy": "^0.15.2",
+        "ava": "^7.0.0",
+        "esbuild": "^0.27.3",
+        "eslint-config-tidy": "^0.16.0",
         "joi": "^18.0.0",
         "playwright": "^1.51.1",
         "xo": "^1.2.1"

@@ -62,7 +62,7 @@ const main = async (input, options) => {
         },
         stringifyJson   : options.stringifyJson || JSON.stringify,
         throwHttpErrors : options.throwHttpErrors !== false,
-        timeout         : options.timeout ?? 30_000,
+        timeout         : options.timeout ?? 30_000
     };
 
     if (typeof input === 'string') {
