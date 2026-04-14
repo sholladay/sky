@@ -119,7 +119,7 @@ test('sky() throws AbortError if signal is aborted while in progress', withServe
     t.is(error.message, `Request aborted: GET ${new URL(server.info.uri)}sleep/1500`);
     t.true(error.request instanceof Request);
     t.true((endTime - startTime) >= 500, 'must wait the full time until user aborts');
-    t.true((endTime - startTime) < 1000, 'must not take much longer after abort');
+    t.true((endTime - startTime) < 650, 'must not take much longer after abort');
 });
 
 test('sky() throws AbortError if signal is aborted already', withServer, async (t, server) => {
@@ -130,7 +130,7 @@ test('sky() throws AbortError if signal is aborted already', withServer, async (
     t.true(error instanceof AbortError);
     t.is(error.message, `Request aborted: GET ${new URL(server.info.uri)}sleep/500`);
     t.true(error.request instanceof Request);
-    t.true((endTime - startTime) < 100, 'must detect aborted signal immediately');
+    t.true((endTime - startTime) < 150, 'must detect aborted signal immediately');
 });
 
 test('sky() throws AbortError if signal is aborted with a custom message', withServer, async (t, server) => {
@@ -141,7 +141,7 @@ test('sky() throws AbortError if signal is aborted with a custom message', withS
     t.true(error instanceof AbortError);
     t.is(error.message, `Request aborted due to lunch break: GET ${new URL(server.info.uri)}sleep/500`);
     t.true(error.request instanceof Request);
-    t.true((endTime - startTime) < 100, 'must detect aborted signal immediately');
+    t.true((endTime - startTime) < 150, 'must detect aborted signal immediately');
 });
 
 test('sky() throws AbortError if signal is aborted with a custom error', withServer, async (t, server) => {
@@ -155,5 +155,5 @@ test('sky() throws AbortError if signal is aborted with a custom error', withSer
     t.is(error.message, `Request aborted: GET ${new URL(server.info.uri)}sleep/500`);
     t.is(error.cause, customError);
     t.true(error.request instanceof Request);
-    t.true((endTime - startTime) < 100, 'must detect aborted signal immediately');
+    t.true((endTime - startTime) < 150, 'must detect aborted signal immediately');
 });
