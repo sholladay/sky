@@ -72,9 +72,9 @@ test('sky() throws HTTPError for 5xx status codes', withServer, async (t, server
 test('sky() throws TimeoutError after 30 seconds with no response', withServer, async (t, server) => {
     t.timeout(32_000);
 
-    const startTime = Date.now();
+    const startTime = performance.now();
     const error = await t.throwsAsync(sky(server.info.uri + '/sleep/30500'));
-    const endTime = Date.now();
+    const endTime = performance.now();
 
     t.true(error instanceof TimeoutError);
     t.is(error.message, `Request aborted due to timeout: GET ${new URL(server.info.uri)}sleep/30500`);
@@ -84,9 +84,9 @@ test('sky() throws TimeoutError after 30 seconds with no response', withServer, 
 });
 
 test('sky() throws NetworkError quickly if server is unreachable', async (t) => {
-    const startTime = Date.now();
+    const startTime = performance.now();
     const error = await t.throwsAsync(sky('invalid:'));
-    const endTime = Date.now();
+    const endTime = performance.now();
 
     t.true(error instanceof NetworkError);
     t.is(error.message, 'Request failed due to URL or network connection: GET invalid:');
@@ -111,9 +111,9 @@ test('sky() throws AbortError if signal is aborted while in progress', withServe
     setTimeout(() => {
         controller.abort();
     }, 500);
-    const startTime = Date.now();
+    const startTime = performance.now();
     const error = await t.throwsAsync(sky(server.info.uri + '/sleep/1500', { signal : controller.signal }));
-    const endTime = Date.now();
+    const endTime = performance.now();
 
     t.true(error instanceof AbortError);
     t.is(error.message, `Request aborted: GET ${new URL(server.info.uri)}sleep/1500`);
@@ -123,9 +123,9 @@ test('sky() throws AbortError if signal is aborted while in progress', withServe
 });
 
 test('sky() throws AbortError if signal is aborted already', withServer, async (t, server) => {
-    const startTime = Date.now();
+    const startTime = performance.now();
     const error = await t.throwsAsync(sky(server.info.uri + '/sleep/500', { signal : AbortSignal.abort() }));
-    const endTime = Date.now();
+    const endTime = performance.now();
 
     t.true(error instanceof AbortError);
     t.is(error.message, `Request aborted: GET ${new URL(server.info.uri)}sleep/500`);
@@ -134,9 +134,9 @@ test('sky() throws AbortError if signal is aborted already', withServer, async (
 });
 
 test('sky() throws AbortError if signal is aborted with a custom message', withServer, async (t, server) => {
-    const startTime = Date.now();
+    const startTime = performance.now();
     const error = await t.throwsAsync(sky(server.info.uri + '/sleep/500', { signal : AbortSignal.abort('lunch break') }));
-    const endTime = Date.now();
+    const endTime = performance.now();
 
     t.true(error instanceof AbortError);
     t.is(error.message, `Request aborted due to lunch break: GET ${new URL(server.info.uri)}sleep/500`);
@@ -147,9 +147,9 @@ test('sky() throws AbortError if signal is aborted with a custom message', withS
 test('sky() throws AbortError if signal is aborted with a custom error', withServer, async (t, server) => {
     class FooError extends Error {}
     const customError = new FooError();
-    const startTime = Date.now();
+    const startTime = performance.now();
     const error = await t.throwsAsync(sky(server.info.uri + '/sleep/500', { signal : AbortSignal.abort(customError) }));
-    const endTime = Date.now();
+    const endTime = performance.now();
 
     t.true(error instanceof AbortError);
     t.is(error.message, `Request aborted: GET ${new URL(server.info.uri)}sleep/500`);

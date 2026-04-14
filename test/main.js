@@ -64,9 +64,9 @@ test('sky.extend()', withServer, async (t, server) => {
 test('sky() waits up to 30 seconds for a response', withServer, async (t, server) => {
     t.timeout(32_000);
 
-    const startTime = Date.now();
+    const startTime = performance.now();
     const response = await sky(server.info.uri + '/sleep/29500');
-    const endTime = Date.now();
+    const endTime = performance.now();
 
     t.true(response instanceof Response);
     t.is(response.status, 200);
