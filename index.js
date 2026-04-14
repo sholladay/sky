@@ -117,6 +117,9 @@ const createInstance = (defaults) => {
     };
 
     instance.create = (newDefaults) => {
+        if (typeof newDefaults === 'function') {
+            newDefaults = newDefaults(defaults || {});
+        }
         return createInstance(newDefaults);
     };
     instance.extend = (newDefaults) => {
