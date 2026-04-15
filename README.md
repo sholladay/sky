@@ -95,16 +95,16 @@ Options for how requests are retried in case of failure.
 
 By default, only requests with a safe method are retried. Also, if the failure is due to a response with a non-2xx HTTP status code, the request is only retried if it is a safe status code.
 
-##### responseType
-##### throwHttpErrors
-##### parseJson
-##### stringifyJson
-##### hooks
-###### hooks.beforeRequest
-###### hooks.afterResponse
-##### timeout
 ##### fetch
+##### hooks
+###### hooks.afterResponse
+###### hooks.beforeRequest
 ##### json
+##### parseJson
+##### responseType
+##### stringifyJson
+##### throwHttpErrors
+##### timeout
 
 **See the source code for these options that are not yet documented.**
 
