@@ -89,7 +89,7 @@ In most cases, you should use the `baseUrl` option instead, such as if you want 
 
 ##### retry
 
-Type: `number` | [`RetryOptions`](https://github.com/sindresorhus/p-retry/tree/0a288cc203d657eb20e317163ae21834b86ba1bb?tab=readme-ov-file#options)
+Type: `number` | [`RetryOptions`](https://github.com/sindresorhus/p-retry?tab=readme-ov-file#options)
 
 Options for how requests are retried in case of failure.
 

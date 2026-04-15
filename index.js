@@ -23,7 +23,8 @@ const sendRequest = async (input, options) => {
         }
     }, {
         ...options.retry,
-        shouldRetry(error) {
+        shouldRetry(context) {
+            const { error } = context;
             // In Node.js: fetch('foo:')
             const isUnknownScheme = error.name === 'NetworkError' && error.cause?.cause?.message === 'unknown scheme';
             const isFatal = error.name === 'AbortError' || isUnknownScheme;
@@ -36,7 +37,7 @@ const sendRequest = async (input, options) => {
                     && options.retry.statusCodes.includes(error.response.status);
             }
 
-            return options.retry.shouldRetry?.(error) ?? true;
+            return options.retry.shouldRetry?.(context) ?? true;
         }
     });
 };
